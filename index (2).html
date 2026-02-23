@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jason Kishore — AI Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0d0d0f;
+      --surface:  #141417;
+      --border:   #222228;
+      --accent-1: #e8ff47;
+      --accent-2: #ff6b35;
+      --accent-3: #7b61ff;
+      --text-hi:  #f0f0f0;
+      --text-lo:  #6b6b78;
+      --radius:   16px;
+    }
+
+    body {
+      font-family: 'Syne', sans-serif;
+      background: var(--bg);
+      color: var(--text-hi);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 24px 80px;
+      overflow-x: hidden;
+    }
+
+    /* grain */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 999;
+    }
+
+    /* ── HEADER ── */
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeUp 0.7s ease both;
+    }
+    .label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent-1);
+      margin-bottom: 14px;
+    }
+    header h1 {
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+    }
+    header h1 em {
+      font-style: normal;
+      background: linear-gradient(90deg, var(--accent-1) 0%, var(--accent-2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .sub {
+      margin-top: 14px;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: var(--text-lo);
+      letter-spacing: 0.04em;
+    }
+    .sub span { color: var(--accent-3); }
+    .version-pill {
+      display: inline-block;
+      margin-top: 18px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      padding: 5px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text-lo);
+      letter-spacing: 0.08em;
+    }
+    .version-pill strong { color: var(--accent-1); }
+
+    /* ── SECTION LABELS ── */
+    .section-label {
+      width: 100%;
+      max-width: 1120px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-lo);
+      margin-bottom: 14px;
+      margin-top: 36px;
+      padding-left: 2px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── GRID ── */
+    .grid {
+      width: 100%;
+      max-width: 1120px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    .grid-2 {
+      width: 100%;
+      max-width: 1120px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      animation: fadeUp 0.6s ease both;
+    }
+    .card:nth-child(1)  { animation-delay: 0.05s; }
+    .card:nth-child(2)  { animation-delay: 0.10s; }
+    .card:nth-child(3)  { animation-delay: 0.15s; }
+    .card:nth-child(4)  { animation-delay: 0.20s; }
+    .card:nth-child(5)  { animation-delay: 0.25s; }
+    .card:nth-child(6)  { animation-delay: 0.30s; }
+    .card:nth-child(7)  { animation-delay: 0.35s; }
+    .card:nth-child(8)  { animation-delay: 0.40s; }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 24px 64px rgba(0,0,0,0.55); }
+
+    /* wip cards slightly dimmed */
+    .card.wip { opacity: 0.82; }
+    .card.wip:hover { opacity: 1; }
+
+    /* accent stripe */
+    .card-stripe { height: 3px; width: 100%; }
+    .c-lime   .card-stripe { background: linear-gradient(90deg, var(--accent-1), #b5cc00); }
+    .c-fire   .card-stripe { background: linear-gradient(90deg, var(--accent-2), #ff2d78); }
+    .c-violet .card-stripe { background: linear-gradient(90deg, var(--accent-3), #00c3ff); }
+    .c-teal   .card-stripe { background: linear-gradient(90deg, #00e5c3, #00a8ff); }
+    .c-rose   .card-stripe { background: linear-gradient(90deg, #ff4f8b, #ff9d4f); }
+
+    /* card header */
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 16px 20px 0;
+      gap: 8px;
+    }
+    .card-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      line-height: 1.3;
+    }
+    .badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .c-lime   .badge { background: rgba(232,255,71,.1);   color: var(--accent-1); }
+    .c-fire   .badge { background: rgba(255,107,53,.1);   color: var(--accent-2); }
+    .c-violet .badge { background: rgba(123,97,255,.1);   color: var(--accent-3); }
+    .c-teal   .badge { background: rgba(0,229,195,.1);    color: #00e5c3; }
+    .c-rose   .badge { background: rgba(255,79,139,.1);   color: #ff4f8b; }
+
+    /* tabs nav */
+    .tabs-nav {
+      display: flex;
+      gap: 2px;
+      padding: 12px 14px 0;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs-nav::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      background: none;
+      border: none;
+      font-family: 'DM Mono', monospace;
+      font-size: 10.5px;
+      letter-spacing: 0.06em;
+      color: var(--text-lo);
+      padding: 6px 11px 8px;
+      cursor: pointer;
+      border-radius: 8px 8px 0 0;
+      transition: color 0.2s;
+      white-space: nowrap;
+      position: relative;
+    }
+    .tab-btn:hover { color: var(--text-hi); }
+    .tab-btn.active { color: var(--text-hi); }
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 2px;
+      border-radius: 2px 2px 0 0;
+    }
+    .c-lime   .tab-btn.active::after { background: var(--accent-1); }
+    .c-fire   .tab-btn.active::after { background: var(--accent-2); }
+    .c-violet .tab-btn.active::after { background: var(--accent-3); }
+    .c-teal   .tab-btn.active::after { background: #00e5c3; }
+    .c-rose   .tab-btn.active::after { background: #ff4f8b; }
+
+    /* panels */
+    .tab-panels { padding: 18px 20px 20px; min-height: 175px; }
+    .panel { display: none; animation: fadeIn 0.22s ease; }
+    .panel.active { display: block; }
+
+    .panel-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .panel-body {
+      font-family: 'DM Mono', monospace;
+      font-size: 11.5px;
+      color: var(--text-lo);
+      line-height: 1.75;
+    }
+    .panel-body strong { color: var(--text-hi); font-weight: 500; }
+
+    /* stat pills */
+    .stat-row {
+      display: flex;
+      gap: 7px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    .stat {
+      font-family: 'DM Mono', monospace;
+      font-size: 10.5px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text-lo);
+    }
+    .c-lime   .stat.hi { background: rgba(232,255,71,.08);  border-color: rgba(232,255,71,.25);  color: var(--accent-1); }
+    .c-fire   .stat.hi { background: rgba(255,107,53,.08);  border-color: rgba(255,107,53,.25);  color: var(--accent-2); }
+    .c-violet .stat.hi { background: rgba(123,97,255,.08);  border-color: rgba(123,97,255,.25);  color: var(--accent-3); }
+    .c-teal   .stat.hi { background: rgba(0,229,195,.08);   border-color: rgba(0,229,195,.25);   color: #00e5c3; }
+    .c-rose   .stat.hi { background: rgba(255,79,139,.08);  border-color: rgba(255,79,139,.25);  color: #ff4f8b; }
+
+    /* pipeline block */
+    .pipeline {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--text-lo);
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-top: 12px;
+      line-height: 1.9;
+      letter-spacing: 0.03em;
+    }
+    .c-lime   .pipeline { border-color: rgba(232,255,71,.12); }
+    .c-fire   .pipeline { border-color: rgba(255,107,53,.12); }
+    .c-violet .pipeline { border-color: rgba(123,97,255,.12); }
+    .c-teal   .pipeline { border-color: rgba(0,229,195,.12); }
+    .c-rose   .pipeline { border-color: rgba(255,79,139,.12); }
+
+    /* quote block */
+    .quote {
+      margin-top: 12px;
+      border-left: 2px solid var(--border);
+      padding-left: 12px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-lo);
+      line-height: 1.7;
+      font-style: italic;
+    }
+    .c-lime   .quote { border-color: var(--accent-1); }
+    .c-fire   .quote { border-color: var(--accent-2); }
+    .c-violet .quote { border-color: var(--accent-3); }
+    .c-teal   .quote { border-color: #00e5c3; }
+    .c-rose   .quote { border-color: #ff4f8b; }
+
+    /* amber accent */
+    .c-amber .card-stripe  { background: linear-gradient(90deg, #ffb347, #ffcc02); }
+    .c-amber .badge        { background: rgba(255,179,71,.1); color: #ffb347; }
+    .c-amber .tab-btn.active::after { background: #ffb347; }
+    .c-amber .stat.hi      { background: rgba(255,179,71,.08); border-color: rgba(255,179,71,.3); color: #ffb347; }
+    .c-amber .pipeline     { border-color: rgba(255,179,71,.15); }
+    .c-amber .quote        { border-color: #ffb347; }
+
+    /* full-width grid for about */
+    .grid-full {
+      width: 100%;
+      max-width: 1120px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    /* about card wider panels */
+    .about-card .tab-panels { min-height: 200px; }
+    .about-panels { padding: 20px 24px 24px; }
+
+    /* education block */
+    .edu-block {
+      background: rgba(255,255,255,.025);
+      border: 1px solid rgba(255,179,71,.15);
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-top: 4px;
+    }
+    .edu-degree {
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-hi);
+      margin-bottom: 6px;
+    }
+    .edu-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .edu-uni   { color: var(--text-lo); }
+    .edu-year  { color: var(--text-lo); }
+    .edu-sep   { color: var(--border); }
+    .edu-distinction {
+      color: #ffb347;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 10px;
+      background: rgba(255,179,71,.1);
+      padding: 2px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,179,71,.3);
+    }
+
+    /* wip overlay tag */
+    .wip-tag {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      color: var(--text-lo);
+      margin-bottom: 10px;
+    }
+
+    /* ── footer ── */
+    footer {
+      margin-top: 52px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-lo);
+      letter-spacing: 0.1em;
+      text-align: center;
+    }
+    footer span { color: var(--accent-1); }
+
+    /* ── animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── responsive ── */
+    @media (max-width: 700px) {
+      .grid, .grid-2 { grid-template-columns: 1fr; }
+    }
+    @media (min-width: 701px) and (max-width: 980px) {
+      .grid { grid-template-columns: repeat(2, 1fr); }
+      .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <p class="label">AI Portfolio · V1.0 · 2026</p>
+  <h1><em>Jason Kishore</em></h1>
+  <p class="sub">AI Engineer &amp; Agent Builder &nbsp;·&nbsp; <span>Living Portfolio</span></p>
+  <div class="version-pill"><strong>V1.0</strong> · Interview Ready &nbsp;/&nbsp; V2.0 In Progress</div>
+</header>
+
+<!-- ══════════════════════════════════════
+     V1.0 — LIVE DEMOS
+══════════════════════════════════════ -->
+<p class="section-label">V1.0 — Live Demos</p>
+<div class="grid">
+
+  <!-- CARD 1 · Tab 1 · Agentic News Emailer -->
+  <div class="card c-lime">
+    <div class="card-stripe"></div>
+    <div class="card-header">
+      <span class="card-title">Tab 1 — Agentic News Emailer</span>
+      <span class="badge">✅ Live</span>
+    </div>
+    <div class="tabs-nav">
+      <button class="tab-btn active" data-target="c1p1">What it does</button>
+      <button class="tab-btn" data-target="c1p2">Pipeline</button>
+      <button class="tab-btn" data-target="c1p3">Stack</button>
+    </div>
+    <div class="tab-panels">
+      <div class="panel active" id="c1p1">
+        <p class="panel-title">AI-Powered Newsletter Delivery</p>
+        <p class="panel-body">User enters name, email, selects <strong>news topics</strong> (sports, politics, etc.) and a content filter — <strong>Kids-Friendly</strong> or <strong>Unfiltered</strong>. Hit a button and receive a beautifully formatted <strong>PDF newsletter</strong> directly to your inbox.</p>
+        <div class="stat-row">
+          <span class="stat hi">Multi-Agent</span>
+          <span class="stat">PDF Output</span>
+          <span class="stat">Email Delivery</span>
+        </div>
+      </div>
+      <div class="panel" id="c1p2">
+        <p class="panel-title">Agentic Pipeline</p>
+        <div class="pipeline">
+User Input<br>
+→ Orchestrator Agent<br>
+→ Search Agent (Perplexity API)<br>
+→ Filter Agent (LLM)<br>
+→ Formatter Agent (PDF)<br>
+→ Delivery Agent (Email)
+        </div>
+      </div>
+      <div class="panel" id="c1p3">
+        <p class="panel-title">Tech Stack</p>
+        <p class="panel-body"><strong>Framework:</strong> CrewAI &nbsp;·&nbsp; <strong>Search:</strong> Perplexity API &nbsp;·&nbsp; <strong>PDF:</strong> reportlab &nbsp;·&nbsp; <strong>Email:</strong> SendGrid / Gmail SMTP &nbsp;·&nbsp; <strong>UI:</strong> Streamlit</p>
+        <div class="stat-row">
+          <span class="stat hi">CrewAI</span>
+          <span class="stat">Perplexity</span>
+          <span class="stat">Streamlit</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 2 · Tab 2 · PDF RAG Chatbot -->
+  <div class="card c-fire">
+    <div class="card-stripe"></div>
+    <div class="card-header">
+      <span class="card-title">Tab 2 — PDF RAG Chatbot</span>
+      <span class="badge">✅ Live</span>
+    </div>
+    <div class="tabs-nav">
+      <button class="tab-btn active" data-target="c2p1">What it does</button>
+      <button class="tab-btn" data-target="c2p2">Skills shown</button>
+      <button class="tab-btn" data-target="c2p3">Stack</button>
+    </div>
+    <div class="tab-panels">
+      <div class="panel active" id="c2p1">
+        <p class="panel-title">Chat With Your Newsletter</p>
+        <p class="panel-body">Upload the <strong>generated PDF newsletter</strong> from Tab 1 and ask questions about it via an intelligent chatbot. Context-aware Q&amp;A powered by vector search and LLM reasoning — grounded in your document.</p>
+        <div class="stat-row">
+          <span class="stat hi">RAG Pipeline</span>
+          <span class="stat">Vector Search</span>
+          <span class="stat">LLM Q&amp;A</span>
+        </div>
+      </div>
+      <div class="panel" id="c2p2">
+        <p class="panel-title">Skills Demonstrated</p>
+        <p class="panel-body">Showcases <strong>Retrieval-Augmented Generation</strong>, LLM integration with grounded context, vector similarity search, and document chunking strategy — all core enterprise AI skills.</p>
+        <div class="stat-row">
+          <span class="stat hi">RAG</span>
+          <span class="stat">Grounded LLM</span>
+          <span class="stat">Doc Chunking</span>
+        </div>
+      </div>
+      <div class="panel" id="c2p3">
+        <p class="panel-title">Tech Stack</p>
+        <p class="panel-body"><strong>Orchestration:</strong> LangChain / LlamaIndex &nbsp;·&nbsp; <strong>Vector Store:</strong> ChromaDB / FAISS &nbsp;·&nbsp; <strong>LLM:</strong> Claude Haiku or GPT-4o-mini</p>
+        <div class="stat-row">
+          <span class="stat hi">LangChain</span>
+          <span class="stat">ChromaDB</span>
+          <span class="stat">Claude Haiku</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 3 · Tab 3 · Data Analysis Agent -->
+  <div class="card c-violet">
+    <div class="card-stripe"></div>
+    <div class="card-header">
+      <span class="card-title">Tab 3 — Data Analysis Agent</span>
+      <span class="badge">✅ Locked</span>
+    </div>
+    <div class="tabs-nav">
+      <button class="tab-btn active" data-target="c3p1">What it does</button>
+      <button class="tab-btn" data-target="c3p2">Skills shown</button>
+      <button class="tab-btn" data-target="c3p3">Stack</button>
+    </div>
+    <div class="tab-panels">
+      <div class="panel active" id="c3p1">
+        <p class="panel-title">CSV → Insights + Charts</p>
+        <p class="panel-body">Upload any <strong>CSV file</strong> and the agent autonomously analyzes it, generates charts, and answers natural language questions about the data. No SQL needed — just ask.</p>
+        <div class="stat-row">
+          <span class="stat hi">Code Interpreter</span>
+          <span class="stat">Auto Charts</span>
+          <span class="stat">NL Queries</span>
+        </div>
+      </div>
+      <div class="panel" id="c3p2">
+        <p class="panel-title">Skills Demonstrated</p>
+        <p class="panel-body">Demonstrates <strong>code interpreter agent</strong> patterns, Python data tooling, AI-assisted EDA, and the fusion of data science skills with LLM reasoning — shows both technical and AI depth.</p>
+        <div class="stat-row">
+          <span class="stat hi">Code Interp.</span>
+          <span class="stat">Data Reasoning</span>
+          <span class="stat">Python + AI</span>
+        </div>
+      </div>
+      <div class="panel" id="c3p3">
+        <p class="panel-title">Tech Stack</p>
+        <p class="panel-body"><strong>Data:</strong> Pandas / Matplotlib / Seaborn &nbsp;·&nbsp; <strong>LLM:</strong> Claude Haiku / GPT-4o-mini &nbsp;·&nbsp; <strong>UI:</strong> Streamlit &nbsp;·&nbsp; <strong>Agent:</strong> LangChain Code Interpreter</p>
+        <div class="stat-row">
+          <span class="stat hi">Pandas</span>
+          <span class="stat">Streamlit</span>
+          <span class="stat">LangChain</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid v1 -->
+
+<!-- ══════════════════════════════════════
+     V2.0 — IN DEVELOPMENT
+══════════════════════════════════════ -->
+<p class="section-label">V2.0 — In Development</p>
+<div class="grid">
+
+  <!-- CARD 4 · Tab 4 · Voice AI Agent -->
+  <div class="card c-teal wip">
+    <div class="card-stripe"></div>
+    <div class="card-header">
+      <span class="card-title">Tab 4 — Voice AI Agent</span>
+      <span class="badge">🎙️ Voice</span>
+    </div>
+    <div class="tabs-nav">
+      <button class="tab-btn active" data-target="c4p1">What it does</button>
+      <button class="tab-btn" data-target="c4p2">Pipeline</button>
+      <button class="tab-btn" data-target="c4p3">Stack</button>
+    </div>
+    <div class="tab-panels">
+      <div class="panel active" id="c4p1">
+        <div class="wip-tag">⚙ In Development</div>
+        <p class="panel-title">Real-Time Voice Interaction</p>
+        <p class="panel-body">Speak to the AI agent and hear it respond in a natural voice. Full real-time <strong>speech-to-text → LLM reasoning → text-to-speech</strong> loop. Ask questions, get spoken answers.</p>
+        <div class="stat-row">
+          <span class="stat hi">Real-Time STT</span>
+          <span class="stat">Natural TTS</span>
+          <span class="stat">Voice Loop</span>
+        </div>
+      </div>
+      <div class="panel" id="c4p2">
+        <p class="panel-title">Voice Pipeline</p>
+        <div class="pipeline">
+Microphone Input<br>
+→ Whisper (STT)        ← OpenAI<br>
+→ LLM Reasoning        ← Claude / GPT<br>
+→ ElevenLabs (TTS)     ← voice synthesis<br>
+→ Audio Playback       ← browser speaker
+        </div>
+      </div>
+      <div class="panel" id="c4p3">
+        <p class="panel-title">Tech Stack</p>
+        <p class="panel-body"><strong>STT:</strong> OpenAI Whisper &nbsp;·&nbsp; <strong>TTS:</strong> ElevenLabs &nbsp;·&nbsp; <strong>LLM:</strong> Claude / GPT-4o &nbsp;·&nbsp; <strong>UI:</strong> Streamlit with audio components</p>
+        <div class="stat-row">
+          <span class="stat hi">Whisper</span>
+          <span class="stat">ElevenLabs</span>
+          <span class="stat">Streamlit</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 5 · Tab 5 · Multi-Agent Debate -->
+  <div class="card c-rose wip">
+    <div class="card-stripe"></div>
+    <div class="card-header">
+      <span class="card-title">Tab 5 — Multi-Agent Debate</span>
+      <span class="badge">⚔️ Debate</span>
+    </div>
+    <div class="tabs-nav">
+      <button class="tab-btn active" data-target="c5p1">What it does</button>
+      <button class="tab-btn" data-target="c5p2">Pipeline</button>
+      <button class="tab-btn" data-target="c5p3">Stack</button>
+    </div>
+    <div class="tab-panels">
+      <div class="panel active" id="c5p1">
+        <div class="wip-tag">⚙ In Development</div>
+        <p class="panel-title">AI Agents Argue It Out</p>
+        <p class="panel-body">Enter any topic and watch <strong>two AI agents debate opposing sides</strong> in real time. One argues for, one argues against — a judge agent scores the debate and declares a winner.</p>
+        <div class="stat-row">
+          <span class="stat hi">Multi-Agent</span>
+          <span class="stat">Live Debate</span>
+          <span class="stat">Auto-Judge</span>
+        </div>
+      </div>
+      <div class="panel" id="c5p2">
+        <p class="panel-title">Debate Pipeline</p>
+        <div class="pipeline">
+Topic Input<br>
+→ Agent A (Pro side)   ← LLM instance<br>
+→ Agent B (Con side)   ← LLM instance<br>
+→ Round exchange       ← N turns<br>
+→ Judge Agent          ← scores + verdict<br>
+→ Debate transcript    ← formatted output
+        </div>
+      </div>
+      <div class="panel" id="c5p3">
+        <p class="panel-title">Tech Stack</p>
+        <p class="panel-body"><strong>Framework:</strong> CrewAI or AutoGen &nbsp;·&nbsp; <strong>LLM:</strong> Claude / GPT-4o &nbsp;·&nbsp; <strong>UI:</strong> Streamlit with live streaming output</p>
+        <div class="stat-row">
+          <span class="stat hi">CrewAI</span>
+          <span class="stat">AutoGen</span>
+          <span class="stat">Streaming</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 6 · Tab 6 · AI Code Reviewer -->
+  <div class="card c-violet wip">
+    <div class="card-stripe"></div>
+    <div class="card-header">
+      <span class="card-title">Tab 6 — AI Code Reviewer</span>
+      <span class="badge">🔍 Code</span>
+    </div>
+    <div class="tabs-nav">
+      <button class="tab-btn active" data-target="c6p1">What it does</button>
+      <button class="tab-btn" data-target="c6p2">Pipeline</button>
+      <button class="tab-btn" data-target="c6p3">Stack</button>
+    </div>
+    <div class="tab-panels">
+      <div class="panel active" id="c6p1">
+        <div class="wip-tag">⚙ In Development</div>
+        <p class="panel-title">Instant Code Intelligence</p>
+        <p class="panel-body">Paste any code snippet and receive a detailed AI review covering <strong>bugs, security issues, best practices, and performance</strong>. Combines static analysis with LLM reasoning for deep feedback.</p>
+        <div class="stat-row">
+          <span class="stat hi">Bug Detection</span>
+          <span class="stat">Security Scan</span>
+          <span class="stat">Best Practices</span>
+        </div>
+      </div>
+      <div class="panel" id="c6p2">
+        <p class="panel-title">Review Pipeline</p>
+        <div class="pipeline">
+Code Input (paste or upload)<br>
+→ Static Analysis      ← linting / AST parse<br>
+→ LLM Review           ← bugs + patterns<br>
+→ Security Check       ← vulnerability scan<br>
+→ Scored Report        ← quality rating<br>
+→ Fix Suggestions      ← refactored output
+        </div>
+      </div>
+      <div class="panel" id="c6p3">
+        <p class="panel-title">Tech Stack</p>
+        <p class="panel-body"><strong>Static Analysis:</strong> pylint / ESLint / AST &nbsp;·&nbsp; <strong>LLM:</strong> Claude / GPT-4o &nbsp;·&nbsp; <strong>UI:</strong> Streamlit with code editor component</p>
+        <div class="stat-row">
+          <span class="stat hi">pylint</span>
+          <span class="stat">AST Parsing</span>
+          <span class="stat">Claude</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid v2 row 1 -->
+
+<div class="grid-2" style="margin-top: 18px;">
+
+  <!-- CARD 7 · Tab 7 · Social Media Agent -->
+  <div class="card c-lime wip">
+    <div class="card-stripe"></div>
+    <div class="card-header">
+      <span class="card-title">Tab 7 — Social Media Agent</span>
+      <span class="badge">📣 Social</span>
+    </div>
+    <div class="tabs-nav">
+      <button class="tab-btn active" data-target="c7p1">What it does</button>
+      <button class="tab-btn" data-target="c7p2">Pipeline</button>
+      <button class="tab-btn" data-target="c7p3">Stack</button>
+    </div>
+    <div class="tab-panels">
+      <div class="panel active" id="c7p1">
+        <div class="wip-tag">⚙ In Development</div>
+        <p class="panel-title">Autonomous Content & Posting</p>
+        <p class="panel-body">Give the agent a topic or URL and it autonomously <strong>drafts platform-specific posts</strong> for Twitter/X, LinkedIn, and Instagram — with tone, hashtags, and formatting adapted per platform. Schedule or post directly.</p>
+        <div class="stat-row">
+          <span class="stat hi">Auto-Draft</span>
+          <span class="stat">Multi-Platform</span>
+          <span class="stat">Scheduling</span>
+        </div>
+      </div>
+      <div class="panel" id="c7p2">
+        <p class="panel-title">Social Pipeline</p>
+        <div class="pipeline">
+Topic / URL Input<br>
+→ Content Agent        ← LLM drafting<br>
+→ Platform Adapter     ← tone + format per channel<br>
+→ Hashtag Agent        ← trend-aware tags<br>
+→ Review Step          ← human approval<br>
+→ Posting Agent        ← API publish / schedule
+        </div>
+      </div>
+      <div class="panel" id="c7p3">
+        <p class="panel-title">Tech Stack</p>
+        <p class="panel-body"><strong>Framework:</strong> CrewAI &nbsp;·&nbsp; <strong>LLM:</strong> Claude / GPT-4o &nbsp;·&nbsp; <strong>APIs:</strong> Twitter API v2, LinkedIn API &nbsp;·&nbsp; <strong>Scheduling:</strong> APScheduler</p>
+        <div class="stat-row">
+          <span class="stat hi">CrewAI</span>
+          <span class="stat">Twitter API</span>
+          <span class="stat">APScheduler</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 8 · Tab 8 · AI Financial Advisor -->
+  <div class="card c-fire wip">
+    <div class="card-stripe"></div>
+    <div class="card-header">
+      <span class="card-title">Tab 8 — AI Financial Advisor</span>
+      <span class="badge">💰 Fintech</span>
+    </div>
+    <div class="tabs-nav">
+      <button class="tab-btn active" data-target="c8p1">What it does</button>
+      <button class="tab-btn" data-target="c8p2">Pipeline</button>
+      <button class="tab-btn" data-target="c8p3">Stack</button>
+    </div>
+    <div class="tab-panels">
+      <div class="panel active" id="c8p1">
+        <div class="wip-tag">⚙ In Development</div>
+        <p class="panel-title">Financial Doc Analysis & Q&A</p>
+        <p class="panel-body">Upload financial PDFs — bank statements, reports, earnings docs — and get <strong>AI-parsed summaries, key metrics, risk flags, and natural language Q&amp;A</strong>. Turns dense documents into clear insights.</p>
+        <div class="stat-row">
+          <span class="stat hi">PDF Parsing</span>
+          <span class="stat">Key Metrics</span>
+          <span class="stat">Risk Flags</span>
+        </div>
+      </div>
+      <div class="panel" id="c8p2">
+        <p class="panel-title">Fintech Pipeline</p>
+        <div class="pipeline">
+PDF Upload (statements / reports)<br>
+→ PDF Parser           ← text + table extract<br>
+→ Metric Extractor     ← LLM structured output<br>
+→ Risk Analyzer        ← pattern detection<br>
+→ RAG Q&amp;A Engine       ← document-grounded<br>
+→ Summary Report       ← charts + insights
+        </div>
+      </div>
+      <div class="panel" id="c8p3">
+        <p class="panel-title">Tech Stack</p>
+        <p class="panel-body"><strong>PDF:</strong> pdfplumber / PyMuPDF &nbsp;·&nbsp; <strong>LLM:</strong> Claude / GPT-4o &nbsp;·&nbsp; <strong>RAG:</strong> LangChain + FAISS &nbsp;·&nbsp; <strong>Viz:</strong> Plotly &nbsp;·&nbsp; <strong>UI:</strong> Streamlit</p>
+        <div class="stat-row">
+          <span class="stat hi">pdfplumber</span>
+          <span class="stat">LangChain</span>
+          <span class="stat">Plotly</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid v2 row 2 -->
+
+<!-- ══════════════════════════════════════
+     ABOUT
+══════════════════════════════════════ -->
+<p class="section-label">About</p>
+<div class="grid-full">
+
+  <!-- CARD · About Jason Kishore -->
+  <div class="card c-amber about-card">
+    <div class="card-stripe"></div>
+    <div class="card-header">
+      <span class="card-title">Jason Kishore — AI Engineer</span>
+      <span class="badge">👤 About</span>
+    </div>
+    <div class="tabs-nav">
+      <button class="tab-btn active" data-target="ca1">Who I Am</button>
+      <button class="tab-btn" data-target="ca2">Education</button>
+      <button class="tab-btn" data-target="ca3">Currently Building</button>
+    </div>
+    <div class="tab-panels about-panels">
+      <div class="panel active" id="ca1">
+        <p class="panel-title">AI Engineer & Agent Builder</p>
+        <p class="panel-body">
+          I build <strong>AI-powered systems</strong> that solve real problems — from multi-agent pipelines to RAG chatbots to data analysis agents.
+          This portfolio was built in a couple of days to demonstrate production-ready AI engineering skills across the full stack:
+          agent orchestration, retrieval systems, voice AI, and autonomous agents.<br><br>
+          My focus is on systems that are <strong>autonomous, grounded, and production-grade</strong> — not just demos, but architectures that scale.
+        </p>
+        <div class="stat-row">
+          <span class="stat hi">Agent Systems</span>
+          <span class="stat">RAG Pipelines</span>
+          <span class="stat">LLM Integration</span>
+          <span class="stat">Full-Stack AI</span>
+        </div>
+      </div>
+      <div class="panel" id="ca2">
+        <p class="panel-title">Academic Background</p>
+        <div class="edu-block">
+          <div class="edu-degree">MSc Artificial Intelligence &amp; Machine Learning</div>
+          <div class="edu-meta">
+            <span class="edu-uni">Queen Mary University of London</span>
+            <span class="edu-sep">·</span>
+            <span class="edu-year">2025</span>
+            <span class="edu-sep">·</span>
+            <span class="edu-distinction">Distinction</span>
+          </div>
+          <p class="panel-body" style="margin-top: 14px;">
+            Graduated with <strong>Distinction</strong> — the highest classification. Covered deep learning, reinforcement learning, natural language processing, computer vision, probabilistic modelling, and AI systems design.
+            The same skills now powering every tab in this portfolio.
+          </p>
+        </div>
+        <div class="edu-block" style="margin-top: 12px;">
+          <div class="edu-degree">BEng Electronics &amp; Communication Engineering</div>
+          <div class="edu-meta">
+            <span class="edu-uni">Panimalar Engineering College</span>
+            <span class="edu-sep">·</span>
+            <span class="edu-distinction">Distinction · 8.8 / 10</span>
+          </div>
+          <p class="panel-body" style="margin-top: 14px;">
+            Graduated with <strong>Distinction</strong> (8.8/10) in Electronics &amp; Communication Engineering — building a strong foundation in signal processing, embedded systems, digital circuits, and communication protocols that now underpins hardware-aware AI thinking.
+          </p>
+        </div>
+        <div class="stat-row">
+          <span class="stat hi">MSc AI &amp; ML · Distinction</span>
+          <span class="stat">QMUL · 2025</span>
+          <span class="stat hi">BEng ECE · 8.8/10</span>
+          <span class="stat">Panimalar · Distinction</span>
+        </div>
+      </div>
+      <div class="panel" id="ca3">
+        <p class="panel-title">Digital Twin City — AI Agents as People</p>
+        <p class="panel-body">
+          My current research project: a <strong>simulated city where every resident is an AI agent</strong> — each with a unique personality, memory, and decision-making loop.
+          At the center is <strong>my own digital twin</strong>, trained on my voice patterns and speech style to sound, respond, and reason like me.<br><br>
+          The twin learns from my actual chat history and communication style to model how I would respond in any situation — a living, evolving mirror of my thinking and voice.
+        </p>
+        <div class="pipeline" style="margin-top: 14px;">
+Chat &amp; voice data (Jason's patterns)<br>
+→ Speech pattern training  ← voice cloning model<br>
+→ Text pattern training    ← LLM fine-tune on chat<br>
+→ Digital Twin Agent       ← speaks + reasons like Jason<br>
+→ City simulation          ← multi-agent world<br>
+→ Emergent behaviour       ← agents interact autonomously
+        </div>
+        <div class="stat-row">
+          <span class="stat hi">Digital Twin</span>
+          <span class="stat">Voice Cloning</span>
+          <span class="stat">LLM Fine-Tune</span>
+          <span class="stat">Multi-Agent World</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid-full about -->
+
+<footer>
+  <span>Jason Kishore</span> · AI Portfolio · V1.0 · Built 2026 · GitHub + Render
+</footer>
+
+<script>
+  document.querySelectorAll('.tabs-nav').forEach(nav => {
+    nav.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        nav.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const panels = nav.nextElementSibling;
+        panels.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        panels.querySelector('#' + btn.dataset.target).classList.add('active');
+      });
+    });
+  });
+</script>
+</body>
+</html>
